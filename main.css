@@ -9,7 +9,15 @@ body
 {
     overflow: hidden;
 }
-
+button{
+    margin: 40px;
+    padding: 10px;
+    background: linear-gradient(-45deg, rgba(0,0,0,0.50), rgba(255,255,255,0.25));
+    box-shadow: 6px 6px 10px 0 rgba(0, 0, 0, 0.50),
+     -6px -6px 12px 0 rgba(255, 255, 255, 0.35);
+    border-radius: 30px;
+    border-width: 0;
+}
 
 .webgl
 {
@@ -19,11 +27,40 @@ body
     left: 0;
     outline: none;
 }
-#test{
+.row{
     position: fixed;
-    bottom: 12vh;
-    right: 12vh;
-    z-index: 2;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%);
+    margin: 0 auto;
+    z-index: 6;
+    display: inline-block;
+}
+
+/* #test{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 6;
+}
+#wing{
+    position: fixed;
+    bottom: 20px;
+    right: 160px;
+    z-index: 6;
+}
+#spiral{
+  
+} */
+#sattelite{
+   
+}
+#butterfly{
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
 }
 
 
