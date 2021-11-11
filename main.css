@@ -1,0 +1,30 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body
+{
+    overflow: hidden;
+}
+
+
+.webgl
+{
+    z-index: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+#test{
+    position: fixed;
+    bottom: 12vh;
+    right: 12vh;
+    z-index: 2;
+}
+
+
+/*# sourceMappingURL=main.css.map*/
