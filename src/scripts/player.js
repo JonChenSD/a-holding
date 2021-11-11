@@ -33,9 +33,9 @@ const polySynth = new Tone.PolySynth().toDestination();
 
 const windchime = new Tone.Sampler({
 	urls: {
-		A2: "windchime.mp3",
+		A2: "https://cdn.glitch.me/91605074-10f7-4363-ade0-868b10a87fcb%2Fwind-chimes-06_fkFe0bEu_WM-%5BAudioTrimmer.com%5D.mp3?v=1636612004315",
 	},
-	baseUrl: "/audio/",
+	
 	onload: () => {
 		windchime.triggerAttackRelease(["C1", "E1", "G1", "B1"], 6);
 	}
