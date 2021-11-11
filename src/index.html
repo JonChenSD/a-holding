@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>24 - Shaders</title>
+</head>
+<body onresize="resize_canvas()">
+    <img id="butterfly" style="z-index: 4; position:fixed" src="https://cdn.glitch.me/91605074-10f7-4363-ade0-868b10a87fcb%2Fbutterfly%20(1).gif?v=1636521944773">
+    <canvas class="webgl" id="threeCanvas"></canvas>
+    <div class="row">
+        <button id="spiral">
+            <img id="sattelite"  src="https://cdn.glitch.me/91605074-10f7-4363-ade0-868b10a87fcb%2Fspiral2.png?v=1636556175699"   width="40px">
+        </button>
+        
+        <button id="wing">
+            <img id="sattelite"  src="https://cdn.glitch.me/91605074-10f7-4363-ade0-868b10a87fcb%2Fleaf.png?v=1636556172720"   width="40px">
+        </button>
+        <button id="test">
+            <img id="sattelite"  src="https://cdn.glitch.me/91605074-10f7-4363-ade0-868b10a87fcb%2Fsattelite3.png?v=1636524703194"   width="40px">
+        </button>
+       
+    </div>
+    
+    <!-- <canvas id="myCanvas" style="z-index: 4; position:fixed"></canvas>
+    <script>
+        var canvas = document.querySelector("#myCanvas");
+        var threeCanvas = document.querySelector("#threeCanvas");
+        var context = canvas.getContext("2d");
+        if (canvas.width  < window.innerWidth)
+            {
+                canvas.width  = window.innerWidth;
+            }
+
+            if (canvas.height < window.innerHeight)
+            {
+                canvas.height = window.innerHeight;
+            }
+        var canvasPos = getPosition(canvas);
+        var mouseX = 0;
+        var mouseY = 0;
+        var sqSize = 100;
+        var xPos = 0;
+        var yPos = 0;
+        var dX = 0;
+        var dY = 0;
+        
+        canvas.addEventListener("mousemove", setMousePosition, false);
+        
+        function setMousePosition(e) {
+        mouseX = e.clientX - canvasPos.x;
+        mouseY = e.clientY - canvasPos.y;
+        }
+        
+        function animate() {
+        dX = mouseX - xPos;
+        dY = mouseY - yPos;
+        
+        xPos += (dX / 10);
+        yPos += (dY / 10);
+        var myGif = GIF();
+        myGif.load("https://cdn.glitch.me/91605074-10f7-4363-ade0-868b10a87fcb%2Fbutterfly%20(1).gif?v=1636521944773");
+        ctx.drawImage(myGif.image,0,0); // will draw the playing gif image
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        context.fillStyle = "#00CCFF";
+        context.fillRect(xPos - sqSize / 2,
+                        yPos - sqSize / 2,
+                        sqSize,
+                        sqSize);
+        
+        requestAnimationFrame(animate);
+        }
+        animate();
+        
+        // deal with the page getting resized or scrolled
+        window.addEventListener("scroll", updatePosition, false);
+        window.addEventListener("resize", updatePosition, false);
+        
+        function updatePosition() {
+        canvasPos = getPosition(canvas);
+        }
+        
+        // Helper function to get an element's exact position
+        function getPosition(el) {
+        var xPos = 0;
+        var yPos = 0;
+        
+        while (el) {
+            if (el.tagName == "BODY") {
+            // deal with browser quirks with body/window/document and page scroll
+            var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+            var yScroll = el.scrollTop || document.documentElement.scrollTop;
+        
+            xPos += (el.offsetLeft - xScroll + el.clientLeft);
+            yPos += (el.offsetTop - yScroll + el.clientTop);
+            } else {
+            // for all other non-BODY elements
+            xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+            yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+            }
+        
+            el = el.offsetParent;
+        }
+        return {
+            x: xPos,
+            y: yPos
+        };
+        }   
+    </script> -->
+</body>
+</html>
