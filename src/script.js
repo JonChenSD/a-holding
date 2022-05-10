@@ -3,11 +3,19 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { player } from "./scripts/player.js"
+import VocMap from "./VocMap.json";
+
 
 // Shaders
 import testVertexShader from './shaders/line/vertex.glsl'
 import testFragmentShader from './shaders/line/fragment.glsl'
 console.log(testVertexShader)
+/**
+ * Debug
+ */
+ const gui = new dat.GUI()
+
+
 /**
  * Base
  */
@@ -35,7 +43,10 @@ const onMouseMove = (e) =>{
 }
 document.addEventListener('mousemove', onMouseMove);
 document.addEventListener('touchmove', onMouseMove);
-
+// Colors
+const colors = {
+    fog: '#3d2d54'
+}
 
 // var circle = {
 //      el:$('#butterfly'),
@@ -67,6 +78,7 @@ document.addEventListener('touchmove', onMouseMove);
 // function lerp (start, end, amt){
 //   return (1-amt)*start+amt*end
 // }
+
 /**
  * Textures
  */
@@ -175,8 +187,50 @@ function lineConstructor(){
     scene.add( dotPoints );
 }
 
-for(let i = 0; i < 1000; i++){
-    lineConstructor()
+// for(let i = 0; i < 1000; i++){
+//     lineConstructor()
+// }
+
+const xValues = VocMap.data.map(d => d.X)
+const yValues = VocMap.data.map(d => d.Y)
+
+for (let i = 0; i < VocMap.data.length; i++) {
+    const item = VocMap.data[i]
+    console.log(item.X,item.Y)
+    lineConstructors(item.X,item.Y)
+}
+
+function lineConstructors(x,y){
+  
+    const phi = Math.random( ) * Math.PI * 2;
+	
+    r =  Math.pow( Math.random( ), 1 / 6 ) + 0.08;
+    v.x = r * Math.cos( phi );
+    v.y = r * Math.sin( phi );
+    const coordinate = {
+        x: x *.04 -2,
+        y: (Math.random()*.05 + .02),
+        z: y * .04 - 1.6
+    }
+
+    const points = [];
+    points.push( new THREE.Vector3( coordinate.x, 0, coordinate.z ) );
+    points.push( new THREE.Vector3( coordinate.x, coordinate.y, coordinate.z ) );
+
+    const geometryLine = new THREE.BufferGeometry().setFromPoints( points );
+    const line = new THREE.Line( geometryLine, material );
+    scene.add( line );
+
+    //point
+
+    vertices.push(coordinate.x, coordinate.y, coordinate.z)
+    const geometryPoint = new THREE.BufferGeometry();
+    geometryPoint.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+
+    const dotPoints = new THREE.Points( geometryPoint, materialPoint );
+    dotPointsList.push(dotPoints)
+
+    scene.add( dotPoints );
 }
 /**
  * Sizes
@@ -208,6 +262,9 @@ function onPointerMove( event ) {
     // console.log(pointer)
 }
 
+const fog = new THREE.Fog(colors.fog, .4, .5)
+scene.fog = fog
+
 // Raycaster
 raycaster = new THREE.Raycaster();
 raycaster.params.Points.threshold = threshold;
@@ -218,16 +275,17 @@ document.addEventListener( 'touchend', onPointerMove );
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.2, 30)
-camera.position.set(0.1, .5, .8)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 30)
+camera.position.set(0, .5, .4)
+camera.rotateX(-.8)
 scene.add(camera)
 
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableRotate = false
-controls.enableDamping = true
-controls.autoRotate = true
-controls.autoRotateSpeed = -1.0
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableRotate = false
+// controls.enableDamping = true
+// controls.autoRotate = true
+// controls.autoRotateSpeed = -1.0
 
 /**
  * Renderer
@@ -295,6 +353,17 @@ test.addEventListener('click', async () => {
             console.log('dotpoints',dotPointsList[intersection.index])
     
 })
+//DEBUG
+//
+//
+//
+
+gui.addColor(colors, 'fog')
+gui.add(fog, 'near').min(- 3).max(3).step(0.01)
+gui.add(fog, 'far').min(- 3).max(3).step(0.01)
+
+
+
 /**
  * Animate
  */
@@ -352,8 +421,8 @@ const tick = () =>
     //Update Material
     material.uniforms.uTime.value = elapsedTime
 
-    // Update controls
-    controls.update()
+    // // Update controls
+    // controls.update()
 
     // Render
     renderer.render(scene, camera)
