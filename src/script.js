@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { player } from "./scripts/player.js"
 import VocMap from "./VocMap.json";
-
+import { parseGIF, decompressFrames } from 'gifuct-js'
 
 // Shaders
 import testVertexShader from './shaders/line/vertex.glsl'
@@ -89,8 +89,10 @@ let raycaster;
 const pointer = new THREE.Vector2();
 const threshold = 0.01;
 let intersection = null;
+let intersectionPlane = null;
 const vertices = [];
 const dotPointsList = []
+const movementPlane = []
 /**
  * Test mesh
  */
@@ -153,6 +155,25 @@ const materialPointLarger = new THREE.PointsMaterial( {size:.01, color: 0x34eb77
 
 const v = new THREE.Vector2();
 let r;
+
+const planeGeometry = new THREE.PlaneGeometry( 1, 1 );
+const planeMaterial = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+const plane1 = new THREE.Mesh( planeGeometry, material );
+plane1.position.set(0, 0, .2 )
+console.log(plane1.scale)
+plane1.scale.set(.04,.04,.04)
+plane1.rotateX(THREE.Math.degToRad(-45))
+console.log(plane1.scale)
+scene.add( plane1 );
+
+const plane2 = new THREE.Mesh( planeGeometry, planeMaterial );
+plane2.position.set(0, 0, .2 )
+console.log(plane2.scale)
+plane2.scale.set(1,1,1)
+plane2.rotateX(THREE.Math.degToRad(-90))
+console.log(plane2.scale)
+scene.add( plane2 );
+movementPlane.push(plane2)
 
 function lineConstructor(){
     const phi = Math.random( ) * Math.PI * 2;
@@ -262,7 +283,7 @@ function onPointerMove( event ) {
     // console.log(pointer)
 }
 
-const fog = new THREE.Fog(colors.fog, .4, .5)
+const fog = new THREE.Fog(colors.fog, .37, 1.34)
 scene.fog = fog
 
 // Raycaster
@@ -287,6 +308,50 @@ scene.add(camera)
 // controls.autoRotate = true
 // controls.autoRotateSpeed = -1.0
 
+function setupKeyControls() {
+    document.onkeydown = keyDown;
+    document.onkeyup = keyUp;
+    function keyDown(e) {
+        const duration = new Date().getTime();
+        console.log(duration)
+        //     // increase momentum if key pressed longer
+        //     let momentum = Math.sqrt(duration + 200) * 0.01 + 0.05;
+
+        //     // adjust for actual time passed
+        // momentum = momentum * delta / 0.016;
+
+        //     // increase momentum if camera higher
+        // momentum = momentum + camera.position.z * 0.02;
+      switch (e.key) {
+        case 'd':
+        camera.position.x += 0.02;
+        console.log('37')
+        break;
+        case 'w':
+        camera.position.z -= 0.02;
+        break;
+        case 'a':
+        camera.position.x -= 0.02;
+        break;
+        case 's':
+        camera.position.z += 0.02;
+        break;
+      }
+    };
+    function keyUp(e) {
+        switch(e.keyCode) {
+        //     case 38: // UP
+        //         playerSpeed = 0; // NOT moving!
+        //         break;
+        //     // other cases...
+        // }
+    }
+
+}
+    
+  }
+
+  setupKeyControls()
 /**
  * Renderer
  */
@@ -299,7 +364,7 @@ renderer.setClearColor( 0x31003d, 1)
 
 let colorpalletes = ['0x31003d','0x34eb77','0x29d8ff','0x002b1c','0x6800e8','0x2e4a52']
 spiral.addEventListener('click', async () => {
-    console.log(materialPoint.color)
+ 
     if(materialPoint.color.g == 0.9686274509803922){
         materialPoint.color.setHex(0x34eb77)
         renderer.setClearColor(0x31003d, 1)
@@ -383,9 +448,19 @@ const tick = () =>
     raycaster.setFromCamera( pointer, camera );
     // console.log(pointer)
     const intersections = raycaster.intersectObjects( dotPointsList, false );
-	intersection = ( intersections.length ) > 0 ? intersections[ 0 ] : null;
+    const intersectionsPlane = raycaster.intersectObjects( movementPlane, false);
 
+    intersection = ( intersections.length ) > 0 ? intersections[ 0 ] : null;
+
+	intersectionPlane = ( intersectionsPlane.length ) > 0 ? intersectionsPlane[ 0 ] : null;
+        if(intersectionPlane !=null){
+            
+            plane1.position.set(intersectionPlane.point.x,intersectionPlane.point.y,intersectionPlane.point.z)
+            console.log('plane intersected',intersectionPlane,plane1.position)
+        }
+        
         if(intersection !=null && currentPoint != intersection.index){
+            console.log('intersected')
             var item = currentNotes[Math.floor(Math.random()*currentNotes.length)];
             if(materialPoint.color.g == 0.9686274509803922){
                 player.play('mono', item)
