@@ -175,6 +175,16 @@ console.log(plane2.scale)
 scene.add( plane2 );
 movementPlane.push(plane2)
 
+
+//selector
+let selectedPoint = false;
+const geometrySelect = new THREE.RingGeometry( .01, .012, 5 );
+const materialSelect = new THREE.MeshBasicMaterial( { color: 0x34eb77, side: THREE.DoubleSide } );
+const meshSelect = new THREE.Mesh( geometrySelect, materialSelect );
+scene.add( meshSelect );
+
+
+
 function lineConstructor(){
     const phi = Math.random( ) * Math.PI * 2;
 	
@@ -250,7 +260,7 @@ function lineConstructors(x,y){
 
     const dotPoints = new THREE.Points( geometryPoint, materialPoint );
     dotPointsList.push(dotPoints)
-
+    console.log('dotpoints yes',dotPoints,geometryPoint, line)
     scene.add( dotPoints );
 }
 /**
@@ -418,6 +428,15 @@ test.addEventListener('click', async () => {
             console.log('dotpoints',dotPointsList[intersection.index])
     
 })
+
+canvas.addEventListener("click", () => {
+    if(currentPoint != null){
+        console.log('point position', currentVectorPoint.geometry.boundingSphere.center)
+        meshSelect.position.set(currentPoint.x,currentPoint.y,currentPoint.z)
+        meshSelect.lookAt(camera.position)
+        selectedPoint = true
+    }
+})
 //DEBUG
 //
 //
@@ -435,6 +454,7 @@ gui.add(fog, 'far').min(- 3).max(3).step(0.01)
 const clock = new THREE.Clock()
 
 let currentPoint = null
+let currentVectorPoint = null
 const notes = ['C','C#','D','D#','E','F','G','G#','A','A#','B']
 const Cmajor = ['C','E','G']
 const Dmajor = ['D','F','A']
@@ -451,16 +471,31 @@ const tick = () =>
     const intersectionsPlane = raycaster.intersectObjects( movementPlane, false);
 
     intersection = ( intersections.length ) > 0 ? intersections[ 0 ] : null;
-
+	
+    var beepos = {x:0, y:0};
+		
+	var mouse = {x:0, y:0}; 
+    var distX = mouse.x - beepos.x;
+	var distY = mouse.y - beepos.y;
+            
 	intersectionPlane = ( intersectionsPlane.length ) > 0 ? intersectionsPlane[ 0 ] : null;
+        
+        
         if(intersectionPlane !=null){
             
-            plane1.position.set(intersectionPlane.point.x,intersectionPlane.point.y,intersectionPlane.point.z)
+            var distX = intersectionPlane.point.x - beepos.x;
+			var distY = intersectionPlane.point.y - beepos.y;
+			//Easing motion
+       //Progressive reduction of distance 
+			beepos.x += distX/3;
+			beepos.y += distY/3;
+            const vec = new THREE.Vector3(intersectionPlane.point.x,intersectionPlane.point.y,intersectionPlane.point.z)
+            plane1.position.lerp(vec,0.05)
             console.log('plane intersected',intersectionPlane,plane1.position)
         }
         
         if(intersection !=null && currentPoint != intersection.index){
-            console.log('intersected')
+            console.log('1intersected', intersection, currentPoint)
             var item = currentNotes[Math.floor(Math.random()*currentNotes.length)];
             if(materialPoint.color.g == 0.9686274509803922){
                 player.play('mono', item)
@@ -479,7 +514,8 @@ const tick = () =>
             // object.material = materialPointLarger
 
             // console.log('point',intersection.material)
-            currentPoint = intersection.index
+            currentPoint = intersection.point
+            currentVectorPoint = dotPointsList[intersection.index]
             // dotPointsList[intersection.index].size.set(.06)
             console.log('dotpoints',dotPointsList[intersection.index])
         }
@@ -489,6 +525,7 @@ const tick = () =>
         }
         else{
             currentPoint = null
+            
             tempCircle.position.set(500,500,500)
         }
     const elapsedTime = clock.getElapsedTime()
